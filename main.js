@@ -76,6 +76,7 @@ function createRandomArray(){
         return;
     }else if(arrayL<10){
         alert("che hai l'array corto? la lunghezza minima è 10");
+        return;
     }
     array=[];
     for (let i = 0; i < arrayL; i++) {
