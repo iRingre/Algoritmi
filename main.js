@@ -42,7 +42,7 @@ function setup() {
     insertionSortButton = createButton('ordina');
     insertionSortButton.position(120,40);
     insertionSortButton.size(80,20);
-    insertionSortButton.mousePressed(insertionSort);
+    insertionSortButton.mousePressed(choise);
 
     //dropdown menu to chose type of algorithm to sort the array
     algorithms = createSelect();
@@ -61,7 +61,7 @@ function draw() {
     draw_array();
 }
 
-function draw_array(){
+async function draw_array(){
     spessore_val = (CANVAS_WIDTH/array.length);
     for (let i = 0; i < array.length; i++) {
         altezza_val = array[i]*(CANVAS_HEIGHT/max(array));
@@ -74,13 +74,33 @@ function createRandomArray(){
     if(arrayL>(CANVAS_WIDTH/2)){
         alert('porco dio la lunghezza massima è '+CANVAS_WIDTH/2);
         return;
-    }else if(arrayL<10){
+    }
+    if(arrayL<10){
         alert("che hai l'array corto? la lunghezza minima è 10");
         return;
     }
     array=[];
     for (let i = 0; i < arrayL; i++) {
-        array[i] = random(1,arrayL);   
+        array[i] = i+1;   
+    }
+     array = shuffle(array);
+}
+
+function choise(){
+    let val = algorithms.value();
+    switch (val) {
+        case 'insertionSort':
+            insertionSort();
+            break;
+        case 'quickSort':
+            console.log('avvio quicksort');
+            console.log(array);
+            console.log(arrayL);
+            quickSort(array,0,arrayL-1);
+            console.log('fine quicksort');
+            break;
+        default:
+            break;
     }
 }
 
@@ -111,18 +131,20 @@ async function insertionSort(){
 }
 
 
-//------------- partition sort ------------------------
+//------------- quick sort ------------------------
 
-function partition(A,f,l){
+async function partition(A,f,l){
     let x = A[l];
     let p = f-1;
-    for (let j = f; j < l-1; j++) {
+    for (let j = f; j < l; j++) {
         if(A[j]<=x){
             p++;
             let app = A[p];
             A[p]=A[j];
             A[j]=app;
         }
+        await sleep(sleepv);
+        await draw_array();
     }
     let app1 = A[p+1];
     A[p+1]= A[l];
@@ -130,11 +152,11 @@ function partition(A,f,l){
     return p+1;
 }
 
-function quickSort(A, f,l){
+async function quickSort(A, f,l){
     if (f<l){
-        let q = partition(A,f,l);
-        quickSort(A,f,q-1);
-        quickSort(A, q+1, l);
+        let q = await partition(A,f,l);
+        await quickSort(A,f,q-1);
+        await quickSort(A, q+1, l);
     }
 }
 
