@@ -48,8 +48,8 @@ function setup() {
     algorithms = createSelect();
     algorithms.position(10,60);
     algorithms.size(108,20);
-    algorithms.option('insertionSort');
-    algorithms.option('quickSort');
+    algorithms.option('InsertionSort');
+    algorithms.option('QuickSort');
     algorithms.option('MergeSort');
     algorithms.option('PartitionSort');
 }
@@ -61,7 +61,7 @@ function draw() {
     draw_array();
 }
 
-async function draw_array(){
+function draw_array(){
     spessore_val = (CANVAS_WIDTH/array.length);
     for (let i = 0; i < array.length; i++) {
         altezza_val = array[i]*(CANVAS_HEIGHT/max(array));
@@ -89,15 +89,18 @@ function createRandomArray(){
 function choise(){
     let val = algorithms.value();
     switch (val) {
-        case 'insertionSort':
+        case 'InsertionSort':
             insertionSort();
             break;
-        case 'quickSort':
+        case 'QuickSort':
             console.log('avvio quicksort');
             console.log(array);
             console.log(arrayL);
             quickSort(array,0,arrayL-1);
             console.log('fine quicksort');
+            break;
+        case 'MergeSort':
+            mergeSort(array,0,arrayL);
             break;
         default:
             break;
@@ -126,7 +129,7 @@ async function insertionSort(){
         }
         await sleep(sleepv);
         array[y+1]=x;
-        await draw_array();
+        draw_array();
     }
 }
 
@@ -144,7 +147,7 @@ async function partition(A,f,l){
             A[j]=app;
         }
         await sleep(sleepv);
-        await draw_array();
+        draw_array();
     }
     let app1 = A[p+1];
     A[p+1]= A[l];
@@ -162,15 +165,15 @@ async function quickSort(A, f,l){
 
 // ----------------- merge sort -------------------
 
-function mergeSort(A, f,l){
+async function mergeSort(A, f,l){
     if (f<l) {
-        let q = (p+r)/2;
-        mergeSort(A,f,q);
-        mergeSort(A,q+1,l);
-        merge(A,f,q,l);
+        let q = (f+l)/2;
+        await mergeSort(A,f,q);
+        await mergeSort(A,q+1,l);
+        await merge(A,f,q,l);
     }
 }
 
-function merge(A,f,q,l){
-    
+async function merge(A, f, q, l) {
+ 
 }
