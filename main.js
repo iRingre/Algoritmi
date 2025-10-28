@@ -1,4 +1,4 @@
-CANVAS_HEIGHT = 700;
+CANVAS_HEIGHT = 670;
 CANVAS_WIDTH = 1400;
 let spessore_val = 0;
 let altezza_val = 0;
@@ -51,7 +51,7 @@ function setup() {
     algorithms.option('InsertionSort');
     algorithms.option('QuickSort');
     algorithms.option('MergeSort');
-    algorithms.option('PartitionSort');
+    algorithms.option('CountingSort');
 }
 
 function draw() {
@@ -86,21 +86,17 @@ function createRandomArray(){
      array = shuffle(array);
 }
 
-function choise(){
+async function choise(){
     let val = algorithms.value();
     switch (val) {
         case 'InsertionSort':
-            insertionSort();
+            await insertionSort();
             break;
         case 'QuickSort':
-            console.log('avvio quicksort');
-            console.log(array);
-            console.log(arrayL);
-            quickSort(array,0,arrayL-1);
-            console.log('fine quicksort');
+            await quickSort(array,0,array.length-1);
             break;
         case 'MergeSort':
-            mergeSort(array,0,arrayL);
+            await mergeSort(array,0,array.length);
             break;
         default:
             break;
@@ -166,14 +162,37 @@ async function quickSort(A, f,l){
 // ----------------- merge sort -------------------
 
 async function mergeSort(A, f,l){
-    if (f<l) {
-        let q = (f+l)/2;
+    if (l-f>1) {
+        let q = Math.floor((f+l)/2);
         await mergeSort(A,f,q);
-        await mergeSort(A,q+1,l);
+        await mergeSort(A,q,l);
         await merge(A,f,q,l);
+    }
+    draw_array();
+}
+
+async function merge(arr, start, mid, end) {
+    let left = start;
+    let right = mid;
+    let temp = [];
+
+    while (left < mid && right < end) {
+        if (arr[left] < arr[right]) {
+        temp.push(arr[left++]);
+        } else {
+        temp.push(arr[right++]);
+        }
+    }
+
+    while (left < mid) temp.push(arr[left++]);
+    while (right < end) temp.push(arr[right++]);
+
+    for (let i = 0; i < temp.length; i++) {
+        arr[start + i] = temp[i];
+        await sleep(sleepv);
+        draw_array();
     }
 }
 
-async function merge(A, f, q, l) {
- 
-}
+//-------------------- counting sort ------------------
+
