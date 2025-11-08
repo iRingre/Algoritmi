@@ -13,6 +13,7 @@ let sleepv = 0;
 
 let array = [];
 let arrayL = 0;
+let maxValA = 0;
 
 function setup() {
     createCanvas(CANVAS_WIDTH,CANVAS_HEIGHT);
@@ -64,7 +65,7 @@ function draw() {
 function draw_array(){
     spessore_val = (CANVAS_WIDTH/array.length);
     for (let i = 0; i < array.length; i++) {
-        altezza_val = array[i]*(CANVAS_HEIGHT/max(array));
+        altezza_val = array[i]*(CANVAS_HEIGHT/maxValA);
         fill(255);
         rect(i * spessore_val, CANVAS_HEIGHT - altezza_val, spessore_val, altezza_val);
     }
@@ -84,6 +85,7 @@ function createRandomArray(){
         array[i] = i+1;   
     }
      array = shuffle(array);
+     maxValA = max(array);
 }
 
 async function choise(){
@@ -97,6 +99,9 @@ async function choise(){
             break;
         case 'MergeSort':
             await mergeSort(array,0,array.length);
+            break;
+        case 'CountingSort':
+            await CountingSort(array, max(array));
             break;
         default:
             break;
@@ -168,7 +173,6 @@ async function mergeSort(A, f,l){
         await mergeSort(A,q,l);
         await merge(A,f,q,l);
     }
-    draw_array();
 }
 
 async function merge(arr, start, mid, end) {
@@ -196,3 +200,31 @@ async function merge(arr, start, mid, end) {
 
 //-------------------- counting sort ------------------
 
+async function CountingSort(arr, maxVal){
+  let count = Array(maxVal + 1).fill(0);
+
+  for (let i = 0; i < arr.length; i++) {
+    count[arr[i]]++;
+  }
+
+  let sorted = [];
+
+  for (let i = 0; i < count.length; i++) {
+    while (count[i] > 0) {
+      sorted.push(i);
+      count[i]--;
+    }
+  }
+
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = sorted[i];
+    draw_array();
+    await sleep(sleepv);
+  }
+}
+
+//-------------------------Radix sort---------------------
+
+async function RadixSort(params) {
+    
+}
