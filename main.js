@@ -53,6 +53,7 @@ function setup() {
     algorithms.option('QuickSort');
     algorithms.option('MergeSort');
     algorithms.option('CountingSort');
+    algorithms.option('RadixSort');
 }
 
 function draw() {
@@ -103,6 +104,9 @@ async function choise(){
         case 'CountingSort':
             await CountingSort(array, max(array));
             break;
+        case 'RadixSort':
+            await radixSort(array);
+            break;
         default:
             break;
     }
@@ -130,7 +134,7 @@ async function insertionSort(){
         }
         await sleep(sleepv);
         array[y+1]=x;
-        draw_array();
+        //draw_array();
     }
 }
 
@@ -148,7 +152,7 @@ async function partition(A,f,l){
             A[j]=app;
         }
         await sleep(sleepv);
-        draw_array();
+        //draw_array();
     }
     let app1 = A[p+1];
     A[p+1]= A[l];
@@ -194,7 +198,7 @@ async function merge(arr, start, mid, end) {
     for (let i = 0; i < temp.length; i++) {
         arr[start + i] = temp[i];
         await sleep(sleepv);
-        draw_array();
+        //draw_array();
     }
 }
 
@@ -218,13 +222,46 @@ async function CountingSort(arr, maxVal){
 
   for (let i = 0; i < arr.length; i++) {
     arr[i] = sorted[i];
-    draw_array();
+    //draw_array();
     await sleep(sleepv);
   }
 }
 
 //-------------------------Radix sort---------------------
 
-async function RadixSort(params) {
-    
+async function radixSort(arr) {
+  let maxNum = max(arr);
+  let digit = 1;
+
+  while (Math.floor(maxNum / digit) > 0) {
+    await countingSortByDigit(arr, digit);
+    digit *= 10;
+  }
+
+  return arr;
+}
+
+async function countingSortByDigit(arr, digit) {
+  let output = new Array(arr.length).fill(0);
+  let count = new Array(10).fill(0);
+
+  for (let i = 0; i < arr.length; i++) {
+    let digitValue = Math.floor(arr[i] / digit) % 10;
+    count[digitValue]++;
+  }
+
+  for (let i = 1; i < 10; i++) {
+    count[i] += count[i - 1];
+  }
+
+  for (let i = arr.length - 1; i >= 0; i--) {
+    let digitValue = Math.floor(arr[i] / digit) % 10;
+    output[count[digitValue] - 1] = arr[i];
+    count[digitValue]--;
+  }
+
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = output[i];
+    await sleep(sleepv);
+  }
 }
