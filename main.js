@@ -178,7 +178,6 @@ async function insertionSort(){
         array[y+1]=x;
         if(array[y+1] != x) swaps++;
         
-        // Aggiorna progresso
         progress = i / array.length;
         //draw_array();
     }
@@ -215,7 +214,6 @@ async function quickSort(A, f,l){
         await quickSort(A,f,q-1);
         await quickSort(A, q+1, l);
     }
-    // Aggiorna progresso (approssimativo)
     if(f === 0 && l === A.length-1) progress = 1;
 }
 
@@ -228,7 +226,6 @@ async function mergeSort(A, f,l){
         await mergeSort(A,q,l);
         await merge(A,f,q,l);
     }
-    // Aggiorna progresso (approssimativo)
     if(f === 0 && l === A.length) progress = 1;
 }
 
@@ -255,7 +252,6 @@ async function merge(arr, start, mid, end) {
         await sleep(sleepv);
         //draw_array();
         
-        // Aggiorna progresso
         progress = (start + i) / arr.length;
     }
 }
@@ -286,7 +282,6 @@ async function CountingSort(arr, maxVal){
     //draw_array();
     await sleep(sleepv);
     
-    // Aggiorna progresso
     progress = i / arr.length;
   }
 }
@@ -352,10 +347,9 @@ async function stalinSort(){
             result.push(array[i]);
         } else {
             swaps++;
+            array[i] = 0;
         }
-        array = result.concat(array.slice(i + 1));
         
-        // Aggiorna progresso
         progress = i / array.length;
     }
 
