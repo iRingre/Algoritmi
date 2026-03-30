@@ -23,14 +23,14 @@ function setup() {
     textbox = createInput('','number');
     textbox.position(10,20);
     textbox.size(100,15);
-    textbox.value(100);
+    textbox.value(300);
 
     //input per millisecondi di delay per ogni iterazione
     delay = createInput('delay','number');
     delay.position(10,40);
     delay.size(100,15);
     delay.value(0);
-    sleepv = delay.value();
+    sleepv = delay.value(0);
 
 
     //button to create the random array
@@ -54,6 +54,7 @@ function setup() {
     algorithms.option('MergeSort');
     algorithms.option('CountingSort');
     algorithms.option('RadixSort');
+    algorithms.option('StalinSort');
 }
 
 function draw() {
@@ -106,6 +107,9 @@ async function choise(){
             break;
         case 'RadixSort':
             await radixSort(array);
+            break;
+        case 'StalinSort':
+            await stalinSort();
             break;
         default:
             break;
@@ -264,4 +268,23 @@ async function countingSortByDigit(arr, digit) {
     arr[i] = output[i];
     await sleep(sleepv);
   }
+}
+
+//-----------------stalin sort-------------------------
+async function stalinSort(){
+    if (array.length <= 1) return;
+
+    let result = [];
+    result.push(array[0]);
+
+    for (let i = 1; i < array.length; i++) {
+        await sleep(sleepv);
+
+        if (array[i] >= result[result.length - 1]) {
+            result.push(array[i]);
+        }
+        array = result.concat(array.slice(i + 1));
+    }
+
+    array = result;
 }
