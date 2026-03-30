@@ -60,6 +60,7 @@ function setup() {
     algorithms.option('CountingSort');
     algorithms.option('RadixSort');
     algorithms.option('StalinSort');
+    algorithms.option('EpsteinSort');
 }
 
 function draw() {
@@ -144,6 +145,9 @@ async function choise(){
             break;
         case 'StalinSort':
             await stalinSort();
+            break;
+        case 'EpsteinSort':
+            await epsteinSort();
             break;
         default:
             break;
@@ -354,6 +358,29 @@ async function stalinSort(){
     }
 
     array = result;
+}
+
+//-------------------epstein sort----------------------
+async function epsteinSort(){
+    if (array.length <= 1) return;
+
+    let result = [];
+
+    for (let i = 0; i < array.length; i++) {
+        await sleep(sleepv);
+        comparisons++;
+        
+        if (array[i] < 18) {
+            result.push(array[i]);
+        } else {
+            swaps++;
+            array[i] = 0;
+        }
+        
+        progress = i / array.length;
+    }
+
+    array = sort(result,result.length);
 }
 
 // Funzione shuffle esistente (da mantenere)
