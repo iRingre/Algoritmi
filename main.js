@@ -62,6 +62,8 @@ function setup() {
     algorithms.option('MergeSort');
     algorithms.option('CountingSort');
     algorithms.option('RadixSort');
+    algorithms.option('ShakerSort');
+    algorithms.option('CycleSort');
     algorithms.option('StalinSort');
     algorithms.option('EpsteinSort');
 }
@@ -158,6 +160,12 @@ async function choise(){
             break;
         case 'EpsteinSort':
             await epsteinSort();
+            break;
+        case 'ShakerSort':
+            await cocktailShakerSort();
+            break;
+        case 'CycleSort':
+            await cycleSort();
             break;
         default:
             break;
@@ -392,11 +400,100 @@ async function epsteinSort(){
     array = sort(result,result.length);
 }
 
-// Funzione shuffle esistente (da mantenere)
-function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+//------------------cocktail shaker sort-----------------------
+async function cocktailShakerSort() {
+    let swapped = true;
+    let start = 0;
+    let end = array.length-1;
+    
+    while (swapped) {
+        swapped = false;
+        
+        // Forward pass
+        for (let i = start; i < end; i++) {
+            comparisons++;
+            if (array[i] > array[i+1]) {
+                [array[i], array[i+1]] = [array[i+1], array[i]];
+                swaps++;
+                swapped = true;
+                await sleep(sleepv);
+                //draw_array();
+            }
+        }
+        
+        if (!swapped) break;
+        
+        swapped = false;
+        end--;
+        
+        // Backward pass
+        for (let i = end-1; i >= start; i--) {
+            comparisons++;
+            if (array[i] > array[i+1]) {
+                [array[i], array[i+1]] = [array[i+1], array[i]];
+                swaps++;
+                swapped = true;
+                await sleep(sleepv);
+                //draw_array();
+            }
+        }
+        start++;
+        progress = start / array.length;
     }
-    return arr;
+}
+
+
+//-------------------cycle sort ------------------------------
+async function cycleSort() {
+    let n = array.length;
+    
+    for (let cycleStart = 0; cycleStart < n-1; cycleStart++) {
+        let item = array[cycleStart];
+        let pos = cycleStart;
+        
+        // Find position where we put the element
+        for (let i = cycleStart+1; i < n; i++) {
+            if (array[i] < item) pos++;
+            comparisons++;
+        }
+        
+        if (pos === cycleStart) continue;
+        
+        // Skip duplicates
+        while (item === array[pos]) {
+            pos++;
+            comparisons++;
+        }
+        
+        // Put the item to its correct position
+        if (pos !== cycleStart) {
+            [array[pos], item] = [item, array[pos]];
+            swaps++;
+            await sleep(sleepv);
+            //draw_array();
+        }
+        
+        // Rotate the rest of the cycle
+        while (pos !== cycleStart) {
+            pos = cycleStart;
+            
+            for (let i = cycleStart+1; i < n; i++) {
+                if (array[i] < item) pos++;
+                comparisons++;
+            }
+            
+            while (item === array[pos]) {
+                pos++;
+                comparisons++;
+            }
+            
+            if (item !== array[pos]) {
+                [array[pos], item] = [item, array[pos]];
+                swaps++;
+                await sleep(sleepv);
+                //draw_array();
+            }
+        }
+        progress = cycleStart / n;
+    }
 }
