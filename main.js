@@ -20,6 +20,9 @@ let swaps = 0;
 let comparisons = 0;
 let progress = 0;
 
+let timeIn = 0;
+let timeFin = 0;
+
 function setup() {
     createCanvas(CANVAS_WIDTH,CANVAS_HEIGHT);
     
@@ -81,23 +84,29 @@ function draw_array(){
 }
 
 function drawProgressBar() {
-    // Sfondo della progress bar
     fill(50);
-    rect(10, CANVAS_HEIGHT - 640, 300, 20);
+    rect(10, CANVAS_HEIGHT - 650, 300, 20);
     
-    // Progresso
-    fill(0, 255, 0);
-    rect(10, CANVAS_HEIGHT - 640, 300 * progress, 20);
+    let progressColor = color(
+        Math.floor(255 * (1 - progress)),
+        Math.floor(255 * progress),
+        0
+    );
+    fill(progressColor);
+    rect(10, CANVAS_HEIGHT - 650, 300 * progress, 20);
     
-    // Testo percentuale
+
     fill(255);
     textSize(14);
     textAlign(LEFT);
-    text(`Progresso: ${Math.floor(progress * 100)}%`, 10, CANVAS_HEIGHT - 650);
+    text(`📊 Progresso: ${Math.floor(progress * 100)}%`, 10, CANVAS_HEIGHT - 655);
+    text(`🔄 Scambi: ${swaps}`, 10, CANVAS_HEIGHT - 610);
+    text(`⚖️ Confronti: ${comparisons}`, 10, CANVAS_HEIGHT - 590);
     
-    // Numero di scambi e confronti
-    text(`Scambi: ${swaps}`, 10, CANVAS_HEIGHT - 600);
-    text(`Confronti: ${comparisons}`, 10, CANVAS_HEIGHT - 580);
+    if( progress >= 1) {
+        let elapsed = ((timeFin - timeIn) / 1000).toFixed(2);
+        text(`⏱️ Tempo: ${elapsed}s`, 10, CANVAS_HEIGHT - 570);
+    }
 }
 
 function createRandomArray(){
@@ -127,6 +136,7 @@ function resetStats() {
 async function choise(){
     let val = algorithms.value();
     resetStats();
+    timeIn = Date.now();
     switch (val) {
         case 'InsertionSort':
             await insertionSort();
@@ -152,6 +162,7 @@ async function choise(){
         default:
             break;
     }
+    timeFin = Date.now();
     progress = 1;
 }
 
@@ -179,9 +190,7 @@ async function insertionSort(){
         }
         comparisons++; // per l'ultimo confronto che esce dal while
         await sleep(sleepv);
-        array[y+1]=x;
-        if(array[y+1] != x) swaps++;
-        
+        array[y+1]=x;        
         progress = i / array.length;
         //draw_array();
     }
