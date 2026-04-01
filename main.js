@@ -64,8 +64,14 @@ function setup() {
     algorithms.option('RadixSort');
     algorithms.option('ShakerSort');
     algorithms.option('CycleSort');
+    algorithms.option('SelectionSort');
+    algorithms.option('GnomeSort');
+    algorithms.option('BrickSort');
+    algorithms.option('HeapSort');
+    algorithms.option('TimSort');
     algorithms.option('StalinSort');
     algorithms.option('EpsteinSort');
+    
 }
 
 function draw() {
@@ -166,6 +172,21 @@ async function choise(){
             break;
         case 'CycleSort':
             await cycleSort();
+            break;
+        case 'SelectionSort':
+            await selectionSort();
+            break;
+        case 'GnomeSort':
+            await gnomeSort();
+            break;
+        case 'BrickSort':
+            await oddEvenSort();
+            break;
+        case 'HeapSort':
+            await heapSort();
+            break;
+        case 'TimSort':
+            await timSort();
             break;
         default:
             break;
@@ -496,4 +517,185 @@ async function cycleSort() {
         }
         progress = cycleStart / n;
     }
+}
+
+//-------------------------------------selection sort------------------------------
+async function selectionSort() {
+    for (let i = 0; i < array.length-1; i++) {
+        let minIdx = i;
+        for (let j = i+1; j < array.length; j++) {
+            comparisons++;
+            if (array[j] < array[minIdx]) {
+                minIdx = j;
+            }
+        }
+        if (minIdx !== i) {
+            [array[i], array[minIdx]] = [array[minIdx], array[i]];
+            swaps++;
+            await sleep(sleepv);
+            //draw_array();
+        }
+        progress = i / array.length;
+    }
+}
+
+//------------------------------ gnome sort---------------------------------
+async function gnomeSort() {
+    let i = 1;
+    while (i < array.length) {
+        comparisons++;
+        if (array[i-1] <= array[i]) {
+            i++;
+            await sleep(sleepv);
+        } else {
+            [array[i-1], array[i]] = [array[i], array[i-1]];
+            swaps++;
+            i--;
+            if (i === 0) i = 1;
+            //draw_array();
+        }
+        progress = i / array.length;
+    }
+}
+
+
+//------------------------------- Brick sort (Odd- Even Sort)------------------------
+async function oddEvenSort() {
+    let sorted = false;
+    let n = array.length;
+    
+    while (sorted == false) {
+        sorted = true;
+        
+        // Odd phase
+        for (let i = 1; i < n-1; i += 2) {
+            comparisons++;
+            if (array[i] > array[i+1]) {
+                [array[i], array[i+1]] = [array[i+1], array[i]];
+                swaps++;
+                sorted = false;
+                await sleep(sleepv);
+                //draw_array();
+            }
+        }
+        
+        // Even phase
+        for (let i = 0; i < n-1; i += 2) {
+            comparisons++;
+            if (array[i] > array[i+1]) {
+                [array[i], array[i+1]] = [array[i+1], array[i]];
+                swaps++;
+                sorted = false;
+                await sleep(sleepv);
+                //draw_array();
+            }
+        }
+    }
+    progress = 1 - (sorted ? 1 : 0);
+    return;
+}
+
+
+//----------------------------------------- heap sort------------------------------------------
+async function heapSort() {
+    let n = array.length;
+    
+    // Build heap
+    for (let i = Math.floor(n/2)-1; i >= 0; i--) {
+        await heapify(n, i);
+    }
+    
+    // Extract elements from heap
+    for (let i = n-1; i > 0; i--) {
+        [array[0], array[i]] = [array[i], array[0]];
+        swaps++;
+        await heapify(i, 0);
+        progress = (n-i) / n;
+        await sleep(sleepv);
+        //draw_array();
+    }
+}
+
+async function heapify(n, i) {
+    let largest = i;
+    let left = 2*i + 1;
+    let right = 2*i + 2;
+    
+    if (left < n && array[left] > array[largest]) {
+        largest = left;
+        comparisons++;
+    }
+    if (right < n && array[right] > array[largest]) {
+        largest = right;
+        comparisons++;
+    }
+    
+    if (largest !== i) {
+        [array[i], array[largest]] = [array[largest], array[i]];
+        swaps++;
+        await heapify(n, largest);
+    }
+}
+
+
+//-------------------------------- tim sort------------------------------------
+const RUN = 32;
+
+async function timSort() {
+    let n = array.length;
+    
+    // Sort individual runs
+    for (let i = 0; i < n; i += RUN) {
+        await insertionSortRange(i, Math.min(i+RUN-1, n-1));
+    }
+    
+    // Merge runs
+    for (let size = RUN; size < n; size = 2*size) {
+        for (let left = 0; left < n; left += 2*size) {
+            let mid = left + size - 1;
+            let right = Math.min(left + 2*size - 1, n-1);
+            if (mid < right) {
+                await mergeRange(left, mid, right);
+            }
+        }
+        progress = size / n;
+    }
+}
+
+async function insertionSortRange(l, r) {
+    for (let i = l+1; i <= r; i++) {
+        let temp = array[i];
+        let j = i-1;
+        while (j >= l && array[j] > temp) {
+            array[j+1] = array[j];
+            swaps++;
+            j--;
+            comparisons++;
+            await sleep(sleepv);
+            //draw_array();
+        }
+        array[j+1] = temp;
+    }
+}
+
+async function mergeRange(l, m, r) {
+    let left = array.slice(l, m+1);
+    let right = array.slice(m+1, r+1);
+    let i = 0, j = 0, k = l;
+    
+    while (i < left.length && j < right.length) {
+        if (left[i] <= right[j]) {
+            array[k] = left[i++];
+        } else {
+            array[k] = right[j++];
+            swaps++;
+        }
+        comparisons++;
+        await sleep(sleepv);
+        //draw_array();
+        k++;
+    }
+    
+    while (i < left.length) array[k++] = left[i++];
+    while (j < right.length) array[k++] = right[j++];
 }
