@@ -639,7 +639,7 @@ async function heapify(n, i) {
 
 
 //-------------------------------- tim sort------------------------------------
-const RUN = 100;
+const RUN = 32;
 
 async function timSort() {
     let n = array.length;
