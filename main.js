@@ -71,6 +71,7 @@ function setup() {
     algorithms.option('TimSort');
     algorithms.option('BitonicSort');
     algorithms.option('CustomFibonacciSort');
+    algorithms.option('ShellSortKnuth');
     algorithms.option('StalinSort');
     algorithms.option('EpsteinSort');
     
@@ -195,6 +196,9 @@ async function choise(){
             break;
         case 'CustomFibonacciSort':
             await customFibonacciSort();
+            break;
+        case 'ShellSortKnuth':
+            await shellSortKnuth();
             break;
         default:
             break;
@@ -766,5 +770,36 @@ async function customFibonacciSort() {
             //swaps++;
         }
         progress = 1 - (k / fib.length);
+    }
+}
+
+//-------------------shell sort con gap di knuth--------------------------
+async function shellSortKnuth() {
+    let n = array.length;
+    
+    // Calcola gap iniziale con formula di Knuth: (3^k - 1) / 2
+    let gap = 1;
+    while (gap < n / 3) {
+        gap = gap * 3 + 1;
+    }
+    
+    while (gap >= 1) {
+        for (let i = gap; i < n; i++) {
+            let temp = array[i];
+            let j = i;
+            
+            while (j >= gap && array[j - gap] > temp) {
+                array[j] = array[j - gap];
+                swaps++;
+                comparisons++;
+                j -= gap;
+                await sleep(sleepv);
+                //draw_array();
+            }
+            array[j] = temp;
+        }
+        
+        gap = Math.floor((gap - 1) / 3);
+        progress = 1 - (gap / (n / 3));
     }
 }
