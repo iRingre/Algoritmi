@@ -69,6 +69,8 @@ function setup() {
     algorithms.option('BrickSort');
     algorithms.option('HeapSort');
     algorithms.option('TimSort');
+    algorithms.option('BitonicSort');
+    algorithms.option('CustomFibonacciSort');
     algorithms.option('StalinSort');
     algorithms.option('EpsteinSort');
     
@@ -187,6 +189,12 @@ async function choise(){
             break;
         case 'TimSort':
             await timSort();
+            break;
+        case 'BitonicSort':
+            await bitonicSort();
+            break;
+        case 'CustomFibonacciSort':
+            await customFibonacciSort();
             break;
         default:
             break;
@@ -698,4 +706,64 @@ async function mergeRange(l, m, r) {
     
     while (i < left.length) array[k++] = left[i++];
     while (j < right.length) array[k++] = right[j++];
+}
+
+//---------------------bitonic sort---------------------------
+// per far si che l'algoritmo funzioni il numero di argomenti deve essere una potenza del due
+async function bitonicSort() {
+    await bitonicSortRec(0, array.length, true);
+}
+
+async function bitonicSortRec(low, cnt, dir) {
+    if (cnt > 1) {
+        let k = Math.floor(cnt / 2);
+        await bitonicSortRec(low, k, true);
+        await bitonicSortRec(low + k, k, false);
+        await bitonicMerge(low, cnt, dir);
+    }
+}
+
+async function bitonicMerge(low, cnt, dir) {
+    if (cnt > 1) {
+        let k = Math.floor(cnt / 2);
+        for (let i = low; i < low + k; i++) {
+            comparisons++;
+            if ((dir === true && array[i] > array[i + k]) ||
+                (dir === false && array[i] < array[i + k])) {
+                [array[i], array[i + k]] = [array[i + k], array[i]];
+                swaps++;
+                await sleep(sleepv);
+                //draw_array();
+            }
+        }
+        await bitonicMerge(low, k, dir);
+        await bitonicMerge(low + k, k, dir);
+    }
+}
+//-------------------------------- algoritmo custo fibonacci sort-------------------------------
+async function customFibonacciSort() {
+    // Usa la sequenza di Fibonacci per i gap
+    let fib = [0, 1];
+    while (fib[fib.length - 1] < array.length) {
+        fib.push(fib[fib.length - 1] + fib[fib.length - 2]);
+    }
+    
+    for (let k = fib.length - 1; k > 0; k--) {
+        let gap = fib[k];
+        for (let i = gap; i < array.length; i++) {
+            let temp = array[i];
+            let j = i;
+            comparisons++;
+            while (j >= gap && array[j - gap] > temp) {
+                array[j] = array[j - gap];
+                swaps++;
+                j -= gap;
+                await sleep(sleepv);
+                //draw_array();
+            }
+            array[j] = temp;
+            //swaps++;
+        }
+        progress = 1 - (k / fib.length);
+    }
 }
