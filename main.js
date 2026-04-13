@@ -679,9 +679,10 @@ async function insertionSortRange(l, r) {
             swaps++;
             j--;
             comparisons++;
-            await sleep(sleepv);
+            //await sleep(sleepv);
             //draw_array();
         }
+        await sleep(sleepv);
         array[j+1] = temp;
     }
 }
