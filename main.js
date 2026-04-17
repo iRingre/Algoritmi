@@ -56,7 +56,7 @@ function setup() {
     //dropdown menu to chose type of algorithm to sort the array
     algorithms = createSelect();
     algorithms.position(10,60);
-    algorithms.size(108,20);
+    algorithms.size(150,20);
     algorithms.option('InsertionSort');
     algorithms.option('QuickSort');
     algorithms.option('MergeSort');
